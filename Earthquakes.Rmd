@@ -1,0 +1,82 @@
+---
+title: "Earthquake Depth vs Magnitude — Covariance & Correlation in R"
+author: "Faithwin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+A teaching exercise using R's built-in quakes dataset to explore the relationship between earthquake depth and magnitude using covariance and correlation.
+
+## Dataset
+The quakes dataset contains observations of 1,000 seismic events near Fiji recorded by the Harvard LASA seismograph network. Each row captures:
+
+# Variable    Description
+lat            Latitude of earthquake epicentre
+long           Longitude of earthquake epicentre
+depth          Depth of earthquake (km)
+mag            Richter magnitude
+stations       Number of stations that detected the event
+
+```{r quakes-head, echo=FALSE}
+data(quakes)
+head(quakes)
+#>      lat   long depth mag stations
+#> 1 -20.42 181.62   562 4.8       41
+#> 2 -20.62 181.03   650 4.2       15
+#> 3 -26.00 184.10    42 5.4       43
+```
+
+## Visualisation
+
+Using scatterplot 
+
+```{r quakes-plot, echo=FALSE}
+plot(quakes$depth, quakes$mag,
+     xlab = "Depth (km)",
+     ylab = "Magnitude",
+     main = "Earthquake Depth vs Magnitude")
+```
+The plot shows a slight downward trend. This means the deeper earthquakes tend to have marginally lower surface magnitudes but with substantial scatter, hinting at a weak relationship.
+
+
+We cannot decide using only the scatterplot. Therefore, we do a covariance check. 
+
+```{r, echo=FALSE}
+cov(quakes$depth, quakes$mag)
+#> [1] -20.02209
+```
+The negative sign confirms that depth and magnitude move in opposite directions: as depth increases, magnitude tends to decrease. However, the raw value of -20.02 is difficult to interpret in isolation because covariance retains the original units (km × Richter scale), making cross-variable comparisons unreliable. So, we run correlation instead. 
+
+
+```{r, echo=FALSE}
+cor(quakes$depth, quakes$mag)
+#> [1] -0.2306377
+```
+A value of −0.23 indicates a weak negative relationship. Depth explains only a small portion of the variation in magnitude — consistent with the scatter visible in the plot.Correlation standardises the covariance to a scale of −1 to +1, making it interpretable. 
+
+## Full correlation Matrix
+
+```{r quakes-matrix, echo=FALSE}
+cor(quakes)
+#>                lat        long       depth         mag    stations
+#> lat      1.0000000  -0.3645440  0.0310258  -0.0504617  -0.0022206
+#> long    -0.3645440   1.0000000  0.1444434  -0.1730673  -0.0535125
+#> depth    0.0310258   0.1444434  1.0000000  -0.2306377  -0.0735151
+#> mag     -0.0504617  -0.1730673 -0.2306377   1.0000000   0.8511824
+#> stations -0.0022206 -0.0535125 -0.0735151   0.8511824   1.0000000
+```
+#Notable Findings 
+mag ↔ stations = 0.85 — Strong positive correlation. More powerful earthquakes are detected by a greater number of stations, which makes physical sense: larger seismic events produce stronger signals that reach more sensors.
+
+depth ↔ mag = −0.23 — Weak negative correlation. Deeper earthquakes tend to register slightly lower surface magnitudes.
+
+lat ↔ long = −0.36 — Moderate negative correlation, reflecting geographic clustering of seismic activity in the Fiji–Tonga region.
+
+depth ↔ stations = −0.07 — Near zero. Depth has almost no bearing on how many stations detect the event.
+
+
+#Thank you. 
