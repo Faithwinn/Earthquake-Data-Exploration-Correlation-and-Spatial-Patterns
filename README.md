@@ -12,4 +12,4 @@ mag         Richter magnitude
 stations    Number of stations that detected the event
 
 # ScatterPlot
-The plot shows a slight downward trend — deeper earthquakes tend to have marginally lower surface magnitudes — but with substantial scatter, hinting at a weak relationship.
+The plot shows a slight downward trend which means that deeper earthquakes tend to have marginally lower surface magnitudes. But it has substantial scatter, hinting at a weak relationship.
